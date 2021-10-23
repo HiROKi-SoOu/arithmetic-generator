@@ -5,8 +5,8 @@ import utils.MathUtil;
 import java.util.Objects;
 
 public class Fraction {
-    int numerator;
-    int denominator;
+    private int numerator;
+    private int denominator;
 
     public Fraction(int numerator, int denominator) {
         this.numerator = numerator;
@@ -16,6 +16,7 @@ public class Fraction {
     public Fraction(int bound, boolean noZero) {
         this.numerator = noZero ? MathUtil.getRandomNum(1, bound) : MathUtil.getRandomNum(0, bound);
         this.denominator = MathUtil.getRandomNum(0,1) == 1 ? 1 : MathUtil.getRandomNum(1, bound); //生成整数和分数的概率各一半
+//        this.denominator = 1;
         simplify();
     }
 
@@ -100,6 +101,7 @@ public class Fraction {
     */
     public static Fraction calDiv(Fraction a, Fraction b) {
         Fraction res = new Fraction(a.numerator * b.denominator, a.denominator * b.numerator);
+        if (res.denominator == 0) return null;
         res.simplify();
         return res;
     }
@@ -135,7 +137,19 @@ public class Fraction {
         return Objects.hash(numerator, denominator);
     }
 
+    public int getNumerator() {
+        return numerator;
+    }
 
+    public int getDenominator() {
+        return denominator;
+    }
 
+    public void setNumerator(int numerator) {
+        this.numerator = numerator;
+    }
 
+    public void setDenominator(int denominator) {
+        this.denominator = denominator;
+    }
 }

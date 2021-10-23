@@ -1,7 +1,5 @@
 package model;
 
-import utils.MathUtil;
-
 import java.util.Vector;
 
 public class Infix {

@@ -16,6 +16,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 /**
  * @description Swing用户界面
@@ -29,43 +30,58 @@ public class Frame extends JFrame {
         initComponents();
     }
 
+    /**
+     * @description 生成题目并写入文件
+     * @param exprNum: 生成个数
+     * @param bound: 题目中出现数字的范围
+     */
     private void genStart(int exprNum, int bound) {
-        exprStrSet = new HashSet<>();
-        expressions = new Vector<>();
 
         try {
+            // 初始化set、vector
+            exprStrSet = new HashSet<>();
+            expressions = new Vector<>();
             textArea.setText("");
+
+            // 清除文件
             FileUtil.clearFile("Exercises.txt");
             FileUtil.clearFile("Answer.txt");
 
-            new Thread(() -> {
-                try {
-                    for (int i = 0; i < exprNum; ) {
-                        Expression expr = Expression.genExpr(3, bound);
-                        if (exprStrSet.contains(expr.str)) continue;
-                        expressions.add(expr);
-                        exprStrSet.add(expr.str);
-//                        String str = i + 1 + ". " + expr.str + " == " + expr.value;
-                        String str = i + 1 + ". " + expr.str;
-                        System.out.println(str);
-                        textArea.append(str + "\n");
-                        textArea.selectAll();
+            // 循环生成
+            for (int i = 0; i < exprNum; ) {
+                Expression expr = Expression.genExpr(3, bound); //生成
 
-                        FileUtil.appendStr2File(i + 1 + ". " + expressions.get(i).str, "Exercises.txt");
-                        FileUtil.appendStr2File(i + 1 + ". " + expressions.get(i).value.toString(), "Answer.txt");
-                        i++;
-                    }
+                //若已出现过此题目或题目中会出现除以0，抛弃该题目
+                if (exprStrSet.contains(expr.str) || expr.value == null) continue;
+                expressions.add(expr);
+                exprStrSet.add(expr.str);
 
-                    JOptionPane.showMessageDialog(null, "生成完毕！");
-                } catch (IOException ioException1) {
-                    JOptionPane.showMessageDialog(null, "文件读写异常：\n" + ioException1.getMessage());
-                }
+                String str = i + 1 + ". " + expr.str;
 
-            }).start();
-        } catch (IOException ioException2) {
-            JOptionPane.showMessageDialog(null, "文件读写异常：\n" + ioException2.getMessage());
+                textArea.append(str + "\n"); //输出至textArea
+                textArea.selectAll(); //保证textArea总在最下显示
+
+                i++; // 计数
+            }
+
+            textArea.append("生成完毕，写入文件中...\n");
+            textArea.selectAll();
+
+            //用stream()将题目和答案组合成字符串并写入至文件
+            FileUtil.appendStr2File(expressions.stream().map(expr -> expressions.indexOf(expr) + 1 + ". " + expr.str)
+                            .collect(Collectors.joining("\n")),
+                    "Exercises.txt");
+
+            FileUtil.appendStr2File(expressions.stream().map(expr -> expressions.indexOf(expr) + 1 + ". " + expr.value)
+                            .collect(Collectors.joining("\n")),
+                    "Answer.txt");
+
+            textArea.append("生成与写入完毕！\n");
+            textArea.selectAll();
+
+        } catch (IOException ioException1) {
+            JOptionPane.showMessageDialog(null, "文件读写异常：\n" + ioException1.getMessage());
         }
-
     }
 
     private void ansCheckButtonActionPerformed() {
@@ -75,8 +91,8 @@ public class Frame extends JFrame {
     private void genStartButtonActionPerformed() {
         if (!exprNumTextField.getText().equals("") &&
                 !numBoundTextField.getText().equals("")) {
-            genStart(Integer.parseInt(exprNumTextField.getText()),
-                    Integer.parseInt(numBoundTextField.getText()));
+            new Thread(() -> genStart(Integer.parseInt(exprNumTextField.getText()),
+                    Integer.parseInt(numBoundTextField.getText()))).start();
         }
     }
 
@@ -98,26 +114,26 @@ public class Frame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         Container contentPane = getContentPane();
         contentPane.setLayout(new MigLayout(
-            "fill,hidemode 3",
-            // columns
-            "[fill]" +
-            "[fill]",
-            // rows
-            "[]" +
-            "[]" +
-            "[]"));
+                "fill,hidemode 3",
+                // columns
+                "[fill]" +
+                        "[fill]",
+                // rows
+                "[]" +
+                        "[]" +
+                        "[]"));
 
         //======== panel ========
         {
             panel.setBorder(new TitledBorder("\u751f\u6210\u9009\u9879"));
             panel.setLayout(new MigLayout(
-                "hidemode 3",
-                // columns
-                "[fill]" +
-                "[fill]",
-                // rows
-                "[]" +
-                "[]"));
+                    "hidemode 3",
+                    // columns
+                    "[fill]" +
+                            "[fill]",
+                    // rows
+                    "[]" +
+                            "[]"));
 
             //---- exprNumLabel ----
             exprNumLabel.setText("\u751f\u6210\u9898\u76ee\u6570\u91cf");

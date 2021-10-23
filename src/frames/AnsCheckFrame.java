@@ -10,7 +10,6 @@ import utils.FileUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
@@ -31,7 +30,7 @@ public class AnsCheckFrame extends JFrame {
         initComponents();
     }
 
-    private void chooseFileButton1ActionPerformed(ActionEvent e) {
+    private void chooseFileButton1ActionPerformed() {
         JFileChooser jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.showDialog(new JLabel(), "选择文件");
@@ -40,7 +39,7 @@ public class AnsCheckFrame extends JFrame {
             filePath1.setText(exerciseFile.getAbsolutePath());
     }
 
-    private void chooseFileButton2ActionPerformed(ActionEvent e) {
+    private void chooseFileButton2ActionPerformed() {
         JFileChooser jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.showDialog(new JLabel(), "选择文件");
@@ -49,7 +48,7 @@ public class AnsCheckFrame extends JFrame {
             filePath1.setText(ansFile.getAbsolutePath());
     }
 
-    private void chooseFileButton3ActionPerformed(ActionEvent e) {
+    private void chooseFileButton3ActionPerformed() {
         JFileChooser jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         jfc.showDialog(new JLabel(), "选择目录");
@@ -59,7 +58,7 @@ public class AnsCheckFrame extends JFrame {
         }
     }
 
-    private void checkAnsButtonActionPerformed(ActionEvent e) {
+    private void checkAnsButtonActionPerformed() {
         new Thread(this::checkAns).start();
     }
 
@@ -85,12 +84,7 @@ public class AnsCheckFrame extends JFrame {
                     wrongVec.add(i + 1);
                 }
             }
-        } catch (NumberFormatException numberFormatException) {
-            JOptionPane.showMessageDialog(null, "文件格式有误！");
-        }
-        rightVec.forEach(System.out::println);
 
-        try {
             FileUtil.clearFile(outPath);
 
             StringBuilder out = new StringBuilder("Correct: " + rightVec.size() + "(");
@@ -105,10 +99,12 @@ public class AnsCheckFrame extends JFrame {
 
             FileUtil.appendStr2File(out.toString(), outPath);
 
-            JOptionPane.showMessageDialog(null, "检查完毕！\n成绩已输出至 " + outPath);
+//            JOptionPane.showMessageDialog(null, "检查完毕！\n成绩已输出至 " + outPath);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "输出文件异常：" + e.getMessage());
             e.printStackTrace();
+        } catch (NumberFormatException numberFormatException) {
+            JOptionPane.showMessageDialog(null, "文件格式有误！");
         }
     }
 
@@ -126,7 +122,6 @@ public class AnsCheckFrame extends JFrame {
         checkAnsButton = new JButton();
 
         //======== this ========
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(410, 180));
         Container contentPane = getContentPane();
         contentPane.setLayout(new MigLayout(
@@ -152,7 +147,7 @@ public class AnsCheckFrame extends JFrame {
 
         //---- chooseFileButton1 ----
         chooseFileButton1.setText("\u9009\u62e9...");
-        chooseFileButton1.addActionListener(e -> chooseFileButton1ActionPerformed(e));
+        chooseFileButton1.addActionListener(e -> chooseFileButton1ActionPerformed());
         contentPane.add(chooseFileButton1, "cell 0 1 2 1,alignx trailing,growx 0");
 
         //---- label2 ----
@@ -165,7 +160,7 @@ public class AnsCheckFrame extends JFrame {
 
         //---- chooseFileButton2 ----
         chooseFileButton2.setText("\u9009\u62e9...");
-        chooseFileButton2.addActionListener(e -> chooseFileButton2ActionPerformed(e));
+        chooseFileButton2.addActionListener(e -> chooseFileButton2ActionPerformed());
         contentPane.add(chooseFileButton2, "cell 0 3 2 1,alignx trailing,growx 0");
 
         //---- label3 ----
@@ -178,12 +173,12 @@ public class AnsCheckFrame extends JFrame {
 
         //---- chooseFileButton3 ----
         chooseFileButton3.setText("\u9009\u62e9...");
-        chooseFileButton3.addActionListener(e -> chooseFileButton3ActionPerformed(e));
+        chooseFileButton3.addActionListener(e -> chooseFileButton3ActionPerformed());
         contentPane.add(chooseFileButton3, "cell 0 5,alignx trailing,growx 0");
 
         //---- checkAnsButton ----
         checkAnsButton.setText("\u5f00\u59cb\u68c0\u67e5");
-        checkAnsButton.addActionListener(e -> checkAnsButtonActionPerformed(e));
+        checkAnsButton.addActionListener(e -> checkAnsButtonActionPerformed());
         contentPane.add(checkAnsButton, "cell 0 6");
         pack();
         setLocationRelativeTo(getOwner());
