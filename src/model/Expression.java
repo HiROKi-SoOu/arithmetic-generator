@@ -152,7 +152,7 @@ public class Expression {
         Fraction res = null;
         Fraction left = null;
         Fraction right = null;
-                
+
         if (expr.type == NUM) {
             res = expr.value;
         } else {
@@ -161,7 +161,7 @@ public class Expression {
             right = calExprResult(expr.right);
             if (left == null || right == null) return null; //出现null说明出现了除以0的算式
         }
-        
+
         switch (expr.type) {
             case NUM:
                 break;
@@ -175,7 +175,7 @@ public class Expression {
                 res = Fraction.calSub(left, right);
                 if (res.getNumerator() < 0) { // 出现负号，交换左右子树并对res取负
                     swapLR(expr);
-                    res.setDenominator(-res.getNumerator());
+                    res.setNumerator(-res.getNumerator());
                 }
                 break;
             }
@@ -187,11 +187,11 @@ public class Expression {
             }
             case DIV:
                 res = Fraction.calDiv(left, right);
-                if (res.getDenominator() == 0) return null; // 保证最外层也不会分母为0
+                if (res == null || res.getDenominator() == 0) return null; // 保证最外层也不会分母为0
                 break;
         }
         expr.value = res;
         return res;
     }
-    
+
 }

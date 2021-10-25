@@ -15,13 +15,14 @@ public class Fraction {
 
     public Fraction(int bound, boolean noZero) {
         this.numerator = noZero ? MathUtil.getRandomNum(1, bound) : MathUtil.getRandomNum(0, bound);
-        this.denominator = MathUtil.getRandomNum(0,1) == 1 ? 1 : MathUtil.getRandomNum(1, bound); //生成整数和分数的概率各一半
+        this.denominator = MathUtil.getRandomNum(0, 1) == 1 ? 1 : MathUtil.getRandomNum(1, bound); //生成整数和分数的概率各一半
 //        this.denominator = 1;
         simplify();
     }
 
     public Fraction(String str) {
-        String[] elems = str.split("/");;
+        String[] elems = str.split("/");
+        ;
         if (str.contains("'")) {
             String[] numeratorArr = elems[0].split("'");
             this.denominator = Integer.parseInt(elems[1]);
@@ -45,60 +46,57 @@ public class Fraction {
             int gcd = MathUtil.gcd(Math.abs(numerator), Math.abs(denominator));
             denominator = denominator / gcd;
             numerator = numerator / gcd;
-            if (denominator<0) {
+            if (denominator < 0) {
                 numerator = -1 * numerator;
                 denominator = -1 * numerator;
             }
         }
     }
 
-
-
-
     /**
-     * @description 计算分数加法 a+b
      * @return model.Fraction
+     * @description 计算分数加法 a+b
      */
     public static Fraction calAdd(Fraction a, Fraction b) {
         Fraction res;
         if (a.denominator == b.denominator) res = new Fraction(a.numerator + b.numerator, a.denominator);
         else {
             int lcm = MathUtil.lcm(a.denominator, b.denominator);
-            res = new Fraction(a.numerator * (lcm/a.denominator) + b.numerator * (lcm/b.denominator), lcm);
+            res = new Fraction(a.numerator * (lcm / a.denominator) + b.numerator * (lcm / b.denominator), lcm);
         }
         res.simplify();
         return res;
     }
 
     /**
-     * @description 计算分数减法 a-b
      * @return model.Fraction
+     * @description 计算分数减法 a-b
      */
-   public static Fraction calSub(Fraction a, Fraction b) {
-       Fraction res;
-       if (a.denominator == b.denominator) res = new Fraction(a.numerator - b.numerator, a.denominator);
-       else {
-           int lcm = MathUtil.lcm(a.denominator, b.denominator);
-           res = new Fraction(a.numerator * (lcm/a.denominator) - b.numerator * (lcm/b.denominator), lcm);
-       }
-       res.simplify();
-       return res;
-   }
+    public static Fraction calSub(Fraction a, Fraction b) {
+        Fraction res;
+        if (a.denominator == b.denominator) res = new Fraction(a.numerator - b.numerator, a.denominator);
+        else {
+            int lcm = MathUtil.lcm(a.denominator, b.denominator);
+            res = new Fraction(a.numerator * (lcm / a.denominator) - b.numerator * (lcm / b.denominator), lcm);
+        }
+        res.simplify();
+        return res;
+    }
 
-   /**
-    * @description 计算分数乘法 a*b
-    * @return model.Fraction
-    */
-   public static Fraction calMul(Fraction a, Fraction b) {
-       Fraction res = new Fraction(a.numerator * b.numerator, a.denominator * b.denominator);
-       res.simplify();
-       return res;
-   }
+    /**
+     * @return model.Fraction
+     * @description 计算分数乘法 a*b
+     */
+    public static Fraction calMul(Fraction a, Fraction b) {
+        Fraction res = new Fraction(a.numerator * b.numerator, a.denominator * b.denominator);
+        res.simplify();
+        return res;
+    }
 
-   /**
-    * @description 计算分数除法 a÷b
-    * @return model.Fraction
-    */
+    /**
+     * @return model.Fraction
+     * @description 计算分数除法 a÷b
+     */
     public static Fraction calDiv(Fraction a, Fraction b) {
         Fraction res = new Fraction(a.numerator * b.denominator, a.denominator * b.numerator);
         if (res.denominator == 0) return null;
@@ -107,21 +105,21 @@ public class Fraction {
     }
 
     /**
+     * @return String
      * @description toString重写，返回分数字符串
      * 例：整数5返回"5"，分数3分之2返回"2/3"
-     * @return String
      * @author HiROKi
      * @date 2021/10/17
      */
     @Override
     public String toString() {
         if (denominator == 0) {
-            System.out.println(); return "[ERROR]"; //改
-        }
-        else if (numerator == 0) return "0";
+            System.out.println();
+            return "[ERROR]"; //改
+        } else if (numerator == 0) return "0";
         else if (denominator == 1) return String.valueOf(numerator);
         else if (numerator < denominator) return numerator + "/" + denominator;
-        else return numerator/denominator + "'" + numerator%denominator + "/" + denominator;
+        else return numerator / denominator + "'" + numerator % denominator + "/" + denominator;
     }
 
     @Override
@@ -151,5 +149,13 @@ public class Fraction {
 
     public void setDenominator(int denominator) {
         this.denominator = denominator;
+    }
+
+    public static void main(String[] args) {
+        Fraction f1 = new Fraction("1'1/3");
+        Fraction f2 = new Fraction("1");
+        System.out.println(calDiv(f1, f2));
+        System.out.println(calDiv(f2, f1));
+
     }
 }

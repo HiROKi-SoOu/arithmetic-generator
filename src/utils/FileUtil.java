@@ -16,7 +16,7 @@ public class FileUtil {
             while ((str = br.readLine()) != null){
                 int index = Integer.parseInt(str.substring(0, str.indexOf('.')));
                 str = str.substring(str.indexOf('.') + 1).replaceAll(" ", "");
-                strVec.add(index - 1, str);
+                strVec.add(str);
             }
         } catch (IOException e) {
             e.printStackTrace();

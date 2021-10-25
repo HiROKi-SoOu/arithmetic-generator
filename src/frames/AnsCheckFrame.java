@@ -17,14 +17,12 @@ import java.util.stream.Collectors;
 
 public class AnsCheckFrame extends JFrame {
 
-    File exerciseFile;
-    File ansFile;
+    private File exerciseFile;
+    private File ansFile;
 
-    Vector<String> exprStrVec;
-    Vector<String> ansVec;
-    Vector<Infix> rightAnsVec = new Vector<>();
-    Vector<Integer> rightVec = new Vector<>();
-    Vector<Integer> wrongVec = new Vector<>();
+    private Vector<Infix> rightAnsVec = new Vector<>();
+    private Vector<Integer> rightVec = new Vector<>();
+    private Vector<Integer> wrongVec = new Vector<>();
 
     public AnsCheckFrame() {
         initComponents();
@@ -45,7 +43,7 @@ public class AnsCheckFrame extends JFrame {
         jfc.showDialog(new JLabel(), "选择文件");
         ansFile = jfc.getSelectedFile();
         if (ansFile != null)
-            filePath1.setText(ansFile.getAbsolutePath());
+            filePath2.setText(ansFile.getAbsolutePath());
     }
 
     private void chooseFileButton3ActionPerformed() {
@@ -63,22 +61,19 @@ public class AnsCheckFrame extends JFrame {
     }
 
     private void checkAns() {
-        if (filePath1.getText() != null && filePath1.getText().equals("Exercises.txt")) {
-            exerciseFile = new File("Exercises.txt");
-        }
-        if (filePath2.getText() != null && filePath2.getText().equals("Answer.txt")) {
-            ansFile = new File("Answer.txt");
-        }
-
         String outPath = filePath3.getText().equals("") ? "Grade.txt" : filePath3.getText() + "\\Grade.txt";
 
         try {
-            exprStrVec = FileUtil.file2StrVec(exerciseFile);
-            ansVec = FileUtil.file2StrVec(ansFile);
+            Vector<String> exprStrVec = FileUtil.file2StrVec(exerciseFile); //题目字符串数组
+            Vector<String> ansStrVec = FileUtil.file2StrVec(ansFile); //答案字符串数组
+
+            if (exprStrVec.size() != ansStrVec.size()) throw new Exception("题目与答案数量不对应！");
 
             exprStrVec.forEach(s -> rightAnsVec.add(new Infix(s)));
             for (int i = 0; i < exprStrVec.size(); i++) {
-                if (ansVec.get(i).equals(rightAnsVec.get(i).value.toString())) {
+
+                if (rightAnsVec.get(i).value == null) throw new Exception("第 " + (i + 1) + " 题无解！");
+                if (ansStrVec.get(i).equals(rightAnsVec.get(i).value.toString())) {
                     rightVec.add(i + 1);
                 } else {
                     wrongVec.add(i + 1);
@@ -99,12 +94,15 @@ public class AnsCheckFrame extends JFrame {
 
             FileUtil.appendStr2File(out.toString(), outPath);
 
-//            JOptionPane.showMessageDialog(null, "检查完毕！\n成绩已输出至 " + outPath);
+            JOptionPane.showMessageDialog(null, "检查完毕！\n成绩已输出至 " + outPath);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "输出文件异常：" + e.getMessage());
             e.printStackTrace();
         } catch (NumberFormatException numberFormatException) {
             JOptionPane.showMessageDialog(null, "文件格式有误！");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -125,17 +123,17 @@ public class AnsCheckFrame extends JFrame {
         setMinimumSize(new Dimension(410, 180));
         Container contentPane = getContentPane();
         contentPane.setLayout(new MigLayout(
-            "fill,hidemode 3",
-            // columns
-            "[fill]",
-            // rows
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]" +
-            "[]"));
+                "fill,hidemode 3",
+                // columns
+                "[fill]",
+                // rows
+                "[]" +
+                        "[]" +
+                        "[]" +
+                        "[]" +
+                        "[]" +
+                        "[]" +
+                        "[]"));
 
         //---- label1 ----
         label1.setText("\u9009\u62e9\u9898\u76ee\u6587\u4ef6\uff08\u9ed8\u8ba4\u5728\u7a0b\u5e8f\u6839\u76ee\u5f55\u4e0b\uff09");
@@ -203,4 +201,5 @@ public class AnsCheckFrame extends JFrame {
     private JButton chooseFileButton3;
     private JButton checkAnsButton;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
+
 }
